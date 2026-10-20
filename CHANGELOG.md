@@ -17,7 +17,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Interactive central file hub displaying the active target filename, mime category badge, file size in KB/MB, and parent folder path.
   - Embedded SVG QR code viewer in center hub for instant mobile scanning.
   - Keyboard navigation: numeric triggers (`1`-`8`), `Esc` / `Backspace` to navigate back or dismiss, and quick slice selection.
-  - Sub-menu hierarchy support: breadcrumb trails, return slices (`Atrás`), and slice transitions.
+  - Sub-menu hierarchy support: breadcrumb trails, return slices (`Back`), and slice transitions.
 - **High-Performance Rust Backend (`omarchy-pie`)**:
   - Fast file detection using mime inference, magic byte sniffing, and metadata probing.
   - Context engine (`src/context.rs`) generating dynamic slice menus tailored specifically to the targeted file extension.
@@ -26,7 +26,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Image Processing & Modern Conversions**:
   - Direct format conversion to modern WebP, AVIF, PNG, JPEG, and `.ICO` Favicon (64×64 multi-layer).
   - High-quality Lanczos3 image scaling presets: `50%`, `75%`, `25%`, `1080p Full HD`, `720p HD`, and `512×512 Square Avatar`.
-  - Quality-controlled file compression (`Comprimir Peso`) optimizing byte size while preserving original dimensions.
+  - Quality-controlled file compression (`Compress Weight`) optimizing byte size while preserving original dimensions.
   - Image transformations: clockwise/counter-clockwise 90° rotation, 180° rotation, and horizontal mirror flip.
   - 5-color dominant palette extraction directly to clipboard in `#RRGGBB` format.
   - Lossless EXIF and GPS geolocation metadata stripping via ImageMagick/ExifTool.

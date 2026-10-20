@@ -25,13 +25,13 @@ Unlike generic static application launchers, **Omarchy Pie** inspects the file e
   - **Transform ▸**: Rotate 90° CW/CCW, Rotate 180°, Flip Horizontal, **Extract 5 Dominant HEX Colors** to clipboard, and **Strip EXIF / GPS Metadata**.
   - **OCR Text**: Extracts on-screen text from photos and screenshots straight to your Wayland clipboard via Tesseract.
 
-- 📡 **Instant Sharing & Cross-Device Transfer (`Compartir ▸`)**:
+- 📡 **Instant Sharing & Cross-Device Transfer (`Share ▸`)**:
   - **LocalSend**: Headless 1-click device transmission using `localsend --headless send` with automatic GUI fallback.
   - **Wi-Fi QR Server**: Rust spins up an ephemeral local HTTP server and renders a scannable SVG QR code directly inside the center hub of the radial menu. Anyone on your local Wi-Fi can scan and download the file immediately.
   - **Cloud Pastebin (`0x0.st`)**: 1-click temporary hosting upload, copying the public link and rendering a scannable QR code.
   - **Base64 / Data URI**: Instant encoding to `data:<mime>;base64,...` formatted strings for developers.
 
-- 🏷️ **Intelligent Filename Normalizer (`Normalizar ▸`)**:
+- 🏷️ **Intelligent Filename Normalizer (`Normalize ▸`)**:
   - `kebab-case`: `my-document-final.png`
   - `snake_case`: `my_document_final.png`
   - `camelCase`: `myDocumentFinal.png`

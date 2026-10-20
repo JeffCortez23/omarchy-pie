@@ -268,7 +268,7 @@ fn summon_pie(explicit_path: Option<&str>, print_only: bool) {
     let Some(target) = resolve_target_file(explicit_path) else {
         actions::notify(
             "Omarchy Pie",
-            "Selecciona o copia un archivo primero para abrir el menú radial.",
+            "Select or copy a file first to open the radial menu.",
         );
         return;
     };
@@ -300,7 +300,7 @@ fn summon_pie(explicit_path: Option<&str>, print_only: bool) {
     if !summoned {
         actions::notify(
             "Omarchy Pie Error",
-            "No se pudo invocar el plugin io.github.jeffcortez23.omarchy-pie en omarchy-shell",
+            "Could not invoke io.github.jeffcortez23.omarchy-pie in omarchy-shell",
         );
     }
 }
@@ -324,7 +324,7 @@ fn main() {
         }
         "exec" => {
             if args.len() < 4 {
-                eprintln!("Uso: omarchy-pie exec <action_id> <file_path>");
+                eprintln!("Usage: omarchy-pie exec <action_id> <file_path>");
                 std::process::exit(1);
             }
             let action_id = &args[2];
@@ -335,13 +335,13 @@ fn main() {
             }
         }
         "--help" | "-h" | "help" => {
-            println!("omarchy-pie — Menú radial contextual de archivos para Omarchy");
+            println!("omarchy-pie — Context-aware radial file action wheel for Omarchy");
             println!();
-            println!("Uso:");
-            println!("  omarchy-pie [archivo]               Detecta el archivo seleccionado y abre el menú radial en el cursor");
-            println!("  omarchy-pie summon [archivo]        Abre el menú radial en Quickshell");
-            println!("  omarchy-pie inspect [archivo]       Imprime el JSON de contexto y acciones detectadas");
-            println!("  omarchy-pie exec <accion> <archivo> Ejecuta una acción directamente sobre el archivo");
+            println!("Usage:");
+            println!("  omarchy-pie [file]                  Detect active/selected file and open radial menu at cursor");
+            println!("  omarchy-pie summon [file]           Open radial menu in Quickshell");
+            println!("  omarchy-pie inspect [file]          Print detected context JSON and action slices to stdout");
+            println!("  omarchy-pie exec <action> <file>    Execute an action directly on target file");
         }
         other_path => {
             summon_pie(Some(other_path), false);

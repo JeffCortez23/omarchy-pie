@@ -490,7 +490,7 @@ Item {
             text: root.hoveredIndex >= 0 && root.slices[root.hoveredIndex]
               ? root.slices[root.hoveredIndex].subtitle
               : (root.inSubMenu
-                  ? "Clic aquí o Esc para volver"
+                  ? "Click here or Esc to go back"
                   : (root.dimensions ? (root.dimensions + " • " + root.fileSize) : (root.fileKind + " • " + root.fileSize)))
             font.family: root.fontFamily
             font.pixelSize: 10
@@ -552,7 +552,7 @@ Item {
           Text {
             anchors.centerIn: parent
             visible: root.qrLoading
-            text: "󰐲\nGenerando QR…"
+            text: "󰐲\nGenerating QR…"
             font.family: root.fontFamily
             font.pixelSize: 14
             color: "#111318"
@@ -574,7 +574,7 @@ Item {
         Text {
           width: parent.width
           textFormat: Text.PlainText
-          text: root.qrUrl || "Escuchando conexiones…"
+          text: root.qrUrl || "Listening for connections…"
           font.family: root.fontFamily
           font.pixelSize: 10
           color: root.mutedColor
@@ -593,7 +593,7 @@ Item {
 
           Text {
             anchors.centerIn: parent
-            text: "Cerrar (Esc)"
+            text: "Close (Esc)"
             font.family: root.fontFamily
             font.pixelSize: 11
             color: root.fgColor

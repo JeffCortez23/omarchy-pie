@@ -50,7 +50,7 @@ fn unique_output_path(base_dir: &Path, stem: &str, ext: &str) -> PathBuf {
 
 pub fn execute_action(action_id: &str, file_path: &Path) -> Result<(), String> {
     if !file_path.exists() {
-        let msg = format!("El archivo no existe: {}", file_path.display());
+        let msg = format!("File does not exist: {}", file_path.display());
         notify("Error", &msg);
         return Err(msg);
     }
@@ -166,7 +166,7 @@ pub fn execute_action(action_id: &str, file_path: &Path) -> Result<(), String> {
         "copy_path" => {
             let s = file_path.to_string_lossy().to_string();
             wl_copy(&s);
-            notify("Ruta copiada", &s);
+            notify("Path copied", &s);
             Ok(())
         }
         "sha256_sum" => compute_sha256_or_dir_size(file_path),
@@ -175,7 +175,7 @@ pub fn execute_action(action_id: &str, file_path: &Path) -> Result<(), String> {
         "share_qr" => serve_file_qr(file_path),
         "upload_0x0" => upload_to_0x0(file_path),
         other => {
-            let msg = format!("Acción desconocida: {}", other);
+            let msg = format!("Unknown action: {}", other);
             notify("Omarchy Pie", &msg);
             Err(msg)
         }
@@ -185,7 +185,7 @@ pub fn execute_action(action_id: &str, file_path: &Path) -> Result<(), String> {
 fn send_via_localsend(input: &Path) -> Result<(), String> {
     let path_str = input.to_string_lossy().to_string();
     notify(
-        "Enviando con LocalSend…",
+        "Sending via LocalSend…",
         &input.file_name().unwrap_or_default().to_string_lossy(),
     );
 
@@ -210,7 +210,7 @@ fn send_via_localsend(input: &Path) -> Result<(), String> {
     let _ = Command::new("uwsm-app")
         .args(["--", "localsend", &path_str])
         .spawn()
-        .map_err(|e| format!("No se pudo iniciar LocalSend: {}", e))?;
+        .map_err(|e| format!("Could not start LocalSend: {}", e))?;
 
     Ok(())
 }
@@ -218,7 +218,7 @@ fn send_via_localsend(input: &Path) -> Result<(), String> {
 fn convert_image(input: &Path, parent: &Path, stem: &str, target_ext: &str) -> Result<(), String> {
     let output = unique_output_path(parent, stem, target_ext);
     notify(
-        "Convirtiendo imagen…",
+        "Converting image…",
         &format!(
             "{} ➔ {}",
             input.file_name().unwrap_or_default().to_string_lossy(),
@@ -244,9 +244,9 @@ fn convert_image(input: &Path, parent: &Path, stem: &str, target_ext: &str) -> R
                 let out_str = output.to_string_lossy().to_string();
                 wl_copy(&out_str);
                 notify(
-                    "Conversión completada",
+                    "Conversion completed",
                     &format!(
-                        "Guardado en {}\n(Ruta copiada al portapapeles)",
+                        "Saved to {}\n(Path copied to clipboard)",
                         output.file_name().unwrap_or_default().to_string_lossy()
                     ),
                 );
@@ -260,13 +260,13 @@ fn convert_image(input: &Path, parent: &Path, stem: &str, target_ext: &str) -> R
 
 fn convert_to_ico(input: &Path, parent: &Path, stem: &str) -> Result<(), String> {
     let output = unique_output_path(parent, stem, "ico");
-    let img = image::open(input).map_err(|e| format!("No se pudo abrir imagen: {}", e))?;
+    let img = image::open(input).map_err(|e| format!("Could not open image: {}", e))?;
     let icon = img.resize_exact(64, 64, FilterType::Lanczos3);
     icon.save_with_format(&output, ImageFormat::Ico)
-        .map_err(|e| format!("Error guardando ICO: {}", e))?;
+        .map_err(|e| format!("Error saving ICO: {}", e))?;
     wl_copy(&output.to_string_lossy());
     notify(
-        "Favicon .ICO creado (64×64)",
+        "Favicon .ICO created (64×64)",
         &output.file_name().unwrap_or_default().to_string_lossy(),
     );
     Ok(())
@@ -310,7 +310,7 @@ fn compress_image_weight(input: &Path, parent: &Path, stem: &str) -> Result<(), 
 
     wl_copy(&output.to_string_lossy());
     notify(
-        "Imagen comprimida (misma resolución)",
+        "Image compressed (same resolution)",
         &format!(
             "{} ➔ {} (-{}%)\n{}",
             crate::context::format_size(orig_size),
@@ -335,17 +335,17 @@ fn scale_image_percent(
         .to_lowercase();
     let output = unique_output_path(parent, &format!("{}_{}pct", stem, pct), &ext);
 
-    let img = image::open(input).map_err(|e| format!("No se pudo abrir la imagen: {}", e))?;
+    let img = image::open(input).map_err(|e| format!("Could not open image: {}", e))?;
     let new_w = ((img.width() * pct) / 100).max(1);
     let new_h = ((img.height() * pct) / 100).max(1);
     let resized = img.resize_exact(new_w, new_h, FilterType::Lanczos3);
     resized
         .save(&output)
-        .map_err(|e| format!("Error guardando imagen: {}", e))?;
+        .map_err(|e| format!("Error saving image: {}", e))?;
 
     wl_copy(&output.to_string_lossy());
     notify(
-        &format!("Imagen escalada al {}%", pct),
+        &format!("Image scaled to {}%", pct),
         &format!(
             "{}×{} ➔ {}×{} ({})",
             img.width(),
@@ -372,15 +372,15 @@ fn scale_image_max_dim(
         .to_lowercase();
     let output = unique_output_path(parent, &format!("{}_{}", stem, tag), &ext);
 
-    let img = image::open(input).map_err(|e| format!("No se pudo abrir la imagen: {}", e))?;
+    let img = image::open(input).map_err(|e| format!("Could not open image: {}", e))?;
     let resized = img.resize(max_dim, max_dim, FilterType::Lanczos3);
     resized
         .save(&output)
-        .map_err(|e| format!("Error guardando imagen: {}", e))?;
+        .map_err(|e| format!("Error saving image: {}", e))?;
 
     wl_copy(&output.to_string_lossy());
     notify(
-        &format!("Imagen ajustada a {}", tag),
+        &format!("Image fitted to {}", tag),
         &format!(
             "{}×{} ➔ {}",
             resized.width(),
@@ -404,7 +404,7 @@ fn scale_image_square(
         .to_lowercase();
     let output = unique_output_path(parent, &format!("{}_{}x{}", stem, side, side), &ext);
 
-    let mut img = image::open(input).map_err(|e| format!("No se pudo abrir la imagen: {}", e))?;
+    let mut img = image::open(input).map_err(|e| format!("Could not open image: {}", e))?;
     let (w, h) = img.dimensions();
     let min_side = w.min(h);
     let x = (w - min_side) / 2;
@@ -413,11 +413,11 @@ fn scale_image_square(
     let squared = cropped.resize_exact(side, side, FilterType::Lanczos3);
     squared
         .save(&output)
-        .map_err(|e| format!("Error guardando avatar: {}", e))?;
+        .map_err(|e| format!("Error saving avatar: {}", e))?;
 
     wl_copy(&output.to_string_lossy());
     notify(
-        &format!("Avatar {}×{} creado", side, side),
+        &format!("Avatar {}×{} created", side, side),
         &output.file_name().unwrap_or_default().to_string_lossy(),
     );
     Ok(())
@@ -431,7 +431,7 @@ fn transform_image(input: &Path, parent: &Path, stem: &str, op: &str) -> Result<
         .to_lowercase();
     let output = unique_output_path(parent, &format!("{}_{}", stem, op), &ext);
 
-    let img = image::open(input).map_err(|e| format!("Error abriendo imagen: {}", e))?;
+    let img = image::open(input).map_err(|e| format!("Error opening image: {}", e))?;
     let out_img = match op {
         "grayscale" => img.grayscale(),
         "rot90" => img.rotate90(),
@@ -443,17 +443,17 @@ fn transform_image(input: &Path, parent: &Path, stem: &str, op: &str) -> Result<
 
     out_img
         .save(&output)
-        .map_err(|e| format!("Error guardando imagen: {}", e))?;
+        .map_err(|e| format!("Error saving image: {}", e))?;
     wl_copy(&output.to_string_lossy());
     notify(
-        "Transformación completada",
+        "Transformation completed",
         &output.file_name().unwrap_or_default().to_string_lossy(),
     );
     Ok(())
 }
 
 fn extract_dominant_palette(input: &Path) -> Result<(), String> {
-    let img = image::open(input).map_err(|e| format!("No se pudo abrir imagen: {}", e))?;
+    let img = image::open(input).map_err(|e| format!("Could not open image: {}", e))?;
     let small = img.resize(64, 64, FilterType::Nearest).to_rgba8();
     let mut counts: HashMap<(u8, u8, u8), usize> = HashMap::new();
 
@@ -479,7 +479,7 @@ fn extract_dominant_palette(input: &Path) -> Result<(), String> {
 
     let result = hex_colors.join("  ");
     wl_copy(&result);
-    notify("Paleta HEX copiada al portapapeles", &result);
+    notify("HEX palette copied to clipboard", &result);
     Ok(())
 }
 
@@ -491,15 +491,15 @@ fn strip_exif_metadata(input: &Path, parent: &Path, stem: &str) -> Result<(), St
         .to_lowercase();
     let output = unique_output_path(parent, &format!("{}_clean", stem), &ext);
 
-    let img = image::open(input).map_err(|e| format!("Error leyendo imagen: {}", e))?;
+    let img = image::open(input).map_err(|e| format!("Error reading image: {}", e))?;
     img.save(&output)
-        .map_err(|e| format!("Error guardando imagen limpia: {}", e))?;
+        .map_err(|e| format!("Error saving clean image: {}", e))?;
 
     wl_copy(&output.to_string_lossy());
     notify(
-        "Metadatos EXIF eliminados",
+        "EXIF metadata stripped",
         &format!(
-            "Archivo limpio: {}",
+            "Clean file: {}",
             output.file_name().unwrap_or_default().to_string_lossy()
         ),
     );
@@ -507,23 +507,23 @@ fn strip_exif_metadata(input: &Path, parent: &Path, stem: &str) -> Result<(), St
 }
 
 fn run_ocr(input: &Path) -> Result<(), String> {
-    notify("Ejecutando OCR…", "Extrayendo texto con Tesseract");
+    notify("Running OCR…", "Extracting text with Tesseract");
     let output = Command::new("tesseract")
         .args([input.to_str().unwrap_or(""), "stdout"])
         .output()
-        .map_err(|e| format!("Error ejecutando tesseract: {}", e))?;
+        .map_err(|e| format!("Error executing tesseract: {}", e))?;
 
     if !output.status.success() {
         let err = String::from_utf8_lossy(&output.stderr);
-        notify("Error en OCR", &err);
+        notify("OCR Error", &err);
         return Err(err.to_string());
     }
 
     let text = String::from_utf8_lossy(&output.stdout).trim().to_string();
     if text.is_empty() {
         notify(
-            "OCR sin resultados",
-            "No se detectó texto legible en la imagen.",
+            "OCR: No Results",
+            "No legible text was detected in the image.",
         );
         return Ok(());
     }
@@ -531,8 +531,8 @@ fn run_ocr(input: &Path) -> Result<(), String> {
     wl_copy(&text);
     let preview: String = text.chars().take(90).collect();
     notify(
-        "Texto extraído al portapapeles",
-        &format!("«{}…» ({} caracteres)", preview.replace('\n', " "), text.len()),
+        "Text extracted to clipboard",
+        &format!("\"{}…\" ({} characters)", preview.replace('\n', " "), text.len()),
     );
     Ok(())
 }
@@ -568,7 +568,7 @@ fn extract_video_frame(input: &Path, parent: &Path, stem: &str) -> Result<(), St
 
     wl_copy(&output.to_string_lossy());
     notify(
-        "Frame capturado",
+        "Frame captured",
         &output.file_name().unwrap_or_default().to_string_lossy(),
     );
     Ok(())
@@ -602,8 +602,8 @@ fn convert_pdf_to_png(input: &Path, parent: &Path, stem: &str) -> Result<(), Str
     {
         if status.success() {
             notify(
-                "PDF exportado a PNG",
-                &format!("Páginas guardadas como {}_page-*.png", stem),
+                "PDF exported to PNG",
+                &format!("Pages saved as {}_page-*.png", stem),
             );
             return Ok(());
         }
@@ -642,7 +642,7 @@ fn convert_csv_to_json(input: &Path, parent: &Path, stem: &str) -> Result<(), St
     let mut lines = reader.lines();
 
     let Some(Ok(header_line)) = lines.next() else {
-        return Err("CSV vacío".to_string());
+        return Err("CSV file is empty".to_string());
     };
     let delim = if header_line.contains('\t') && !header_line.contains(',') {
         '\t'
@@ -683,13 +683,13 @@ fn convert_csv_to_json(input: &Path, parent: &Path, stem: &str) -> Result<(), St
     }
 
     let json_text = serde_json::to_string_pretty(&rows)
-        .map_err(|e| format!("Error serializando JSON: {}", e))?;
+        .map_err(|e| format!("Error serializing JSON: {}", e))?;
     fs::write(&output, json_text).map_err(|e| e.to_string())?;
     wl_copy(&output.to_string_lossy());
     notify(
-        "CSV convertido a JSON",
+        "CSV converted to JSON",
         &format!(
-            "{} registros ➔ {}",
+            "{} rows ➔ {}",
             rows.len(),
             output.file_name().unwrap_or_default().to_string_lossy()
         ),
@@ -714,14 +714,14 @@ fn compute_file_stats(input: &Path) -> Result<(), String> {
 
     let summary = if cols_count > 1 {
         format!(
-            "{} filas • {} columnas • {} palabras",
+            "{} rows • {} columns • {} words",
             lines_count, cols_count, words_count
         )
     } else {
-        format!("{} líneas • {} palabras", lines_count, words_count)
+        format!("{} lines • {} words", lines_count, words_count)
     };
     wl_copy(&summary);
-    notify("Estadísticas del archivo (copiado)", &summary);
+    notify("File statistics (copied)", &summary);
     Ok(())
 }
 
@@ -733,7 +733,7 @@ fn format_json_file(
 ) -> Result<(), String> {
     let raw = fs::read_to_string(input).map_err(|e| e.to_string())?;
     let parsed: Value =
-        serde_json::from_str(&raw).map_err(|e| format!("JSON inválido: {}", e))?;
+        serde_json::from_str(&raw).map_err(|e| format!("Invalid JSON: {}", e))?;
 
     let formatted = if pretty {
         serde_json::to_string_pretty(&parsed).map_err(|e| e.to_string())?
@@ -747,12 +747,12 @@ fn format_json_file(
     wl_copy(&formatted);
     notify(
         if pretty {
-            "JSON formateado"
+            "JSON formatted"
         } else {
-            "JSON minificado"
+            "JSON minified"
         },
         &format!(
-            "Guardado en {} y copiado al portapapeles",
+            "Saved to {} and copied to clipboard",
             output.file_name().unwrap_or_default().to_string_lossy()
         ),
     );
@@ -781,25 +781,25 @@ fn convert_md_to_html(input: &Path, parent: &Path, stem: &str) -> Result<(), Str
     }
 
     let html = format!(
-        "<!DOCTYPE html>\n<html lang=\"es\">\n<head>\n<meta charset=\"utf-8\">\n<title>{}</title>\n<style>body{{font-family:system-ui,-apple-system,sans-serif;max-width:780px;margin:40px auto;padding:0 20px;line-height:1.6;background:#111318;color:#e2e4e9}}h1,h2,h3{{color:#89b4fa}}code,pre{{background:#1e1e2e;padding:2px 6px;border-radius:4px}}</style>\n</head>\n<body>\n{}\n</body>\n</html>",
+        "<!DOCTYPE html>\n<html lang=\"en\">\n<head>\n<meta charset=\"utf-8\">\n<title>{}</title>\n<style>body{{font-family:system-ui,-apple-system,sans-serif;max-width:780px;margin:40px auto;padding:0 20px;line-height:1.6;background:#111318;color:#e2e4e9}}h1,h2,h3{{color:#89b4fa}}code,pre{{background:#1e1e2e;padding:2px 6px;border-radius:4px}}</style>\n</head>\n<body>\n{}\n</body>\n</html>",
         stem, body
     );
 
     fs::write(&output, html).map_err(|e| e.to_string())?;
     wl_copy(&output.to_string_lossy());
     notify(
-        "Markdown exportado a HTML",
+        "Markdown exported to HTML",
         &output.file_name().unwrap_or_default().to_string_lossy(),
     );
     Ok(())
 }
 
 fn copy_text_content(input: &Path) -> Result<(), String> {
-    let text = fs::read_to_string(input).map_err(|e| format!("Error leyendo texto: {}", e))?;
+    let text = fs::read_to_string(input).map_err(|e| format!("Error reading text: {}", e))?;
     wl_copy(&text);
     notify(
-        "Contenido copiado al portapapeles",
-        &format!("{} caracteres copiados", text.len()),
+        "Content copied to clipboard",
+        &format!("{} characters copied", text.len()),
     );
     Ok(())
 }
@@ -810,9 +810,9 @@ fn make_executable(input: &Path) -> Result<(), String> {
     perms.set_mode(perms.mode() | 0o755);
     fs::set_permissions(input, perms).map_err(|e| e.to_string())?;
     notify(
-        "Permisos actualizados",
+        "Permissions updated",
         &format!(
-            "chmod +x aplicado a {}",
+            "chmod +x applied to {}",
             input.file_name().unwrap_or_default().to_string_lossy()
         ),
     );
@@ -833,7 +833,7 @@ fn run_script_in_terminal(input: &Path) -> Result<(), String> {
         _ => "bash",
     };
     let cmd_str = format!(
-        "{} '{}'; echo ''; read -p 'Presiona Enter para cerrar...'",
+        "{} '{}'; echo ''; read -p 'Press Enter to close...'",
         runner,
         input.to_string_lossy()
     );
@@ -855,7 +855,7 @@ fn run_binary_direct(input: &Path) -> Result<(), String> {
     let _ = make_executable(input);
     let _ = Command::new(input).spawn();
     notify(
-        "Ejecutando aplicación",
+        "Launching application",
         &input.file_name().unwrap_or_default().to_string_lossy(),
     );
     Ok(())
@@ -866,7 +866,7 @@ fn open_in_blender(input: &Path) -> Result<(), String> {
         .args(["--", "blender", input.to_str().unwrap_or("")])
         .spawn();
     notify(
-        "Abriendo en Blender",
+        "Opening in Blender",
         &input.file_name().unwrap_or_default().to_string_lossy(),
     );
     Ok(())
@@ -889,19 +889,19 @@ fn list_archive_contents(input: &Path) -> Result<(), String> {
         let count = text.lines().count();
         wl_copy(&text);
         notify(
-            "Contenido del paquete (copiado)",
-            &format!("{} entradas listadas en el portapapeles", count),
+            "Archive contents (copied)",
+            &format!("{} entries listed to clipboard", count),
         );
         return Ok(());
     }
-    Err("No se pudo listar el archivo".to_string())
+    Err("Could not list archive contents".to_string())
 }
 
 fn copy_as_data_uri(input: &Path) -> Result<(), String> {
-    let bytes = fs::read(input).map_err(|e| format!("No se pudo leer archivo: {}", e))?;
+    let bytes = fs::read(input).map_err(|e| format!("Could not read file: {}", e))?;
     if bytes.len() > 25 * 1024 * 1024 {
-        let msg = "El archivo supera los 25 MB para Data URI en portapapeles".to_string();
-        notify("Archivo demasiado grande", &msg);
+        let msg = "File exceeds 25 MB size limit for clipboard Data URI".to_string();
+        notify("File too large", &msg);
         return Err(msg);
     }
 
@@ -930,11 +930,11 @@ fn copy_as_data_uri(input: &Path) -> Result<(), String> {
     wl_copy(&final_str);
     notify(
         if mime.is_some() {
-            "Data URI copiado"
+            "Data URI copied"
         } else {
-            "Base64 copiado"
+            "Base64 copied"
         },
-        &format!("{} caracteres copiados al portapapeles", final_str.len()),
+        &format!("{} characters copied to clipboard", final_str.len()),
     );
     Ok(())
 }
@@ -951,7 +951,7 @@ fn compute_sha256_or_dir_size(input: &Path) -> Result<(), String> {
             .unwrap_or("0B")
             .to_string();
         wl_copy(&info);
-        notify("Tamaño de carpeta", &format!("Total: {} (copiado)", info));
+        notify("Folder size", &format!("Total: {} (copied)", info));
         return Ok(());
     }
 
@@ -968,7 +968,7 @@ fn compute_sha256_or_dir_size(input: &Path) -> Result<(), String> {
     let hash = format!("{:x}", hasher.finalize());
     wl_copy(&hash);
     notify(
-        "SHA-256 copiado al portapapeles",
+        "SHA-256 copied to clipboard",
         &format!("{}…{}", &hash[..12], &hash[hash.len() - 12..]),
     );
     Ok(())
@@ -1031,7 +1031,7 @@ fn normalize_filename(input: &Path, mode: &str) -> Result<(), String> {
     let stem = input
         .file_stem()
         .and_then(|s| s.to_str())
-        .unwrap_or("archivo");
+        .unwrap_or("file");
 
     let words = tokenize_words(stem);
     let new_stem = match mode {
@@ -1083,7 +1083,7 @@ fn normalize_filename(input: &Path, mode: &str) -> Result<(), String> {
     };
 
     let final_stem = if new_stem.is_empty() {
-        "archivo".to_string()
+        "file".to_string()
     } else {
         new_stem
     };
@@ -1097,22 +1097,22 @@ fn normalize_filename(input: &Path, mode: &str) -> Result<(), String> {
     };
 
     if new_path == input {
-        notify("Nombre normalizado", "El archivo ya tiene ese formato.");
+        notify("Filename normalized", "The file already has that format.");
         return Ok(());
     }
     if new_path.exists() {
         let msg = format!(
-            "Ya existe: {}",
+            "Already exists: {}",
             new_path.file_name().unwrap_or_default().to_string_lossy()
         );
-        notify("No se pudo renombrar", &msg);
+        notify("Could not rename", &msg);
         return Err(msg);
     }
 
-    fs::rename(input, &new_path).map_err(|e| format!("Error renombrando: {}", e))?;
+    fs::rename(input, &new_path).map_err(|e| format!("Error renaming: {}", e))?;
     wl_copy(&new_path.to_string_lossy());
     notify(
-        &format!("Renombrado ({})", mode),
+        &format!("Renamed ({})", mode),
         &format!(
             "➔ {}",
             new_path.file_name().unwrap_or_default().to_string_lossy()
@@ -1130,9 +1130,9 @@ fn convert_ffmpeg(
 ) -> Result<(), String> {
     let output = unique_output_path(parent, stem, target_ext);
     notify(
-        "Procesando con FFmpeg…",
+        "Processing with FFmpeg…",
         &format!(
-            "Generando {}",
+            "Generating {}",
             output.file_name().unwrap_or_default().to_string_lossy()
         ),
     );
@@ -1142,18 +1142,18 @@ fn convert_ffmpeg(
     cmd.args(extra_args);
     cmd.arg(output.to_str().unwrap_or(""));
 
-    let res = cmd.output().map_err(|e| format!("Error ejecutando ffmpeg: {}", e))?;
+    let res = cmd.output().map_err(|e| format!("Error executing ffmpeg: {}", e))?;
     if !res.status.success() {
         let err = String::from_utf8_lossy(&res.stderr);
-        notify("Error en conversión", "FFmpeg devolvió un error.");
+        notify("Conversion error", "FFmpeg returned an error.");
         return Err(err.to_string());
     }
 
     wl_copy(&output.to_string_lossy());
     notify(
-        "Conversión lista",
+        "Conversion ready",
         &format!(
-            "Guardado: {}",
+            "Saved: {}",
             output.file_name().unwrap_or_default().to_string_lossy()
         ),
     );
@@ -1163,8 +1163,8 @@ fn convert_ffmpeg(
 fn convert_video_to_gif(input: &Path, parent: &Path, stem: &str) -> Result<(), String> {
     let output = unique_output_path(parent, stem, "gif");
     notify(
-        "Generando GIF animado…",
-        "Optimizando paleta de colores con FFmpeg",
+        "Generating animated GIF…",
+        "Optimizing color palette with FFmpeg",
     );
 
     let filter = "fps=15,scale=640:-1:flags=lanczos,split[s0][s1];[s0]palettegen[p];[s1][p]paletteuse";
@@ -1183,15 +1183,15 @@ fn convert_video_to_gif(input: &Path, parent: &Path, stem: &str) -> Result<(), S
         .map_err(|e| e.to_string())?;
 
     if !res.status.success() {
-        notify("Error creando GIF", "No se pudo convertir el video.");
+        notify("Error creating GIF", "Could not convert video to GIF.");
         return Err("ffmpeg gif failed".to_string());
     }
 
     wl_copy(&output.to_string_lossy());
     notify(
-        "GIF creado con éxito",
+        "GIF created successfully",
         &format!(
-            "{} (Ruta en portapapeles)",
+            "{} (Path copied to clipboard)",
             output.file_name().unwrap_or_default().to_string_lossy()
         ),
     );
@@ -1201,8 +1201,8 @@ fn convert_video_to_gif(input: &Path, parent: &Path, stem: &str) -> Result<(), S
 fn compress_video(input: &Path, parent: &Path, stem: &str) -> Result<(), String> {
     let output = unique_output_path(parent, &format!("{}_compact", stem), "mp4");
     notify(
-        "Comprimiendo video…",
-        "Recodificando en H.264 ligero para compartir",
+        "Compressing video…",
+        "Re-encoding to lightweight H.264 for easy sharing",
     );
 
     let res = Command::new("ffmpeg")
@@ -1228,7 +1228,7 @@ fn compress_video(input: &Path, parent: &Path, stem: &str) -> Result<(), String>
         .map_err(|e| e.to_string())?;
 
     if !res.status.success() {
-        notify("Error al comprimir", "FFmpeg falló al comprimir el video.");
+        notify("Error compressing", "FFmpeg failed to compress video.");
         return Err("compress failed".to_string());
     }
 
@@ -1237,7 +1237,7 @@ fn compress_video(input: &Path, parent: &Path, stem: &str) -> Result<(), String>
         .unwrap_or_default();
     wl_copy(&output.to_string_lossy());
     notify(
-        "Video comprimido listo",
+        "Compressed video ready",
         &format!(
             "{} ({})",
             output.file_name().unwrap_or_default().to_string_lossy(),
@@ -1275,13 +1275,13 @@ fn create_zip(input: &Path, parent: &Path, stem: &str) -> Result<(), String> {
         .map_err(|e| e.to_string())?;
 
     if !res.status.success() {
-        notify("Error al crear ZIP", "El comando zip devolvió un error.");
+        notify("Error creating ZIP", "The zip command returned an error.");
         return Err("zip failed".to_string());
     }
 
     wl_copy(&output.to_string_lossy());
     notify(
-        "Archivo ZIP creado",
+        "ZIP archive created",
         &output.file_name().unwrap_or_default().to_string_lossy(),
     );
     Ok(())
@@ -1301,13 +1301,13 @@ fn create_tar_zst(input: &Path, parent: &Path, stem: &str) -> Result<(), String>
         .map_err(|e| e.to_string())?;
 
     if !res.status.success() {
-        notify("Error al crear .tar.zst", "El comando tar devolvió un error.");
+        notify("Error creating .tar.zst", "The tar command returned an error.");
         return Err("tar.zst failed".to_string());
     }
 
     wl_copy(&output.to_string_lossy());
     notify(
-        "Paquete .tar.zst creado",
+        ".tar.zst package created",
         &output.file_name().unwrap_or_default().to_string_lossy(),
     );
     Ok(())
@@ -1343,16 +1343,16 @@ fn extract_archive(input: &Path, parent: &Path, stem: &str) -> Result<(), String
         Ok(s) if s.success() => {
             wl_copy(&out_dir.to_string_lossy());
             notify(
-                "Archivo extraído",
+                "Archive extracted",
                 &format!(
-                    "Carpeta: {}",
+                    "Folder: {}",
                     out_dir.file_name().unwrap_or_default().to_string_lossy()
                 ),
             );
             Ok(())
         }
         _ => {
-            notify("Error al extraer", "No se pudo descomprimir el archivo.");
+            notify("Error extracting", "Could not decompress archive.");
             Err("extract failed".to_string())
         }
     }
@@ -1453,8 +1453,8 @@ fn upload_to_0x0(input: &Path) -> Result<(), String> {
     let url = String::from_utf8_lossy(&res.stdout).trim().to_string();
     if !res.status.success() || !url.starts_with("http") {
         notify(
-            "0x0.st no disponible",
-            "Activando servidor Wi-Fi local con QR como alternativa",
+            "0x0.st unavailable",
+            "Falling back to local Wi-Fi QR server",
         );
         return serve_file_qr(input);
     }
@@ -1466,8 +1466,8 @@ fn upload_to_0x0(input: &Path) -> Result<(), String> {
     let qr_path = tmp_dir.join(format!("qr_cloud_{}.svg", ts));
     let _ = generate_qr_svg(&url, &qr_path);
     wl_copy(&url);
-    push_qr_to_shell(&url, &qr_path, "Enlace público en 0x0.st (copiado)");
-    notify("Subido a 0x0.st", &format!("{} (copiado al portapapeles)", url));
+    push_qr_to_shell(&url, &qr_path, "Public link on 0x0.st (copied)");
+    notify("Uploaded to 0x0.st", &format!("{} (copied to clipboard)", url));
     Ok(())
 }
 
@@ -1528,7 +1528,7 @@ fn serve_file_qr(input: &Path) -> Result<(), String> {
     generate_qr_svg(&url, &qr_path)?;
 
     wl_copy(&url);
-    push_qr_to_shell(&url, &qr_path, "Escanea con tu móvil en la misma red Wi-Fi");
+    push_qr_to_shell(&url, &qr_path, "Scan with your phone on same Wi-Fi network");
 
     let _ = listener.set_nonblocking(false);
     let start = SystemTime::now();
@@ -1556,8 +1556,8 @@ fn serve_file_qr(input: &Path) -> Result<(), String> {
                 if stream.write_all(headers.as_bytes()).is_ok() {
                     if std::io::copy(&mut f, &mut stream).is_ok() {
                         notify(
-                            "Archivo descargado por Wi-Fi",
-                            &format!("Enviado a {}", peer.ip()),
+                            "File downloaded via Wi-Fi",
+                            &format!("Sent to {}", peer.ip()),
                         );
                     }
                 }

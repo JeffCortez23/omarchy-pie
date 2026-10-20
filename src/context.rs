@@ -87,47 +87,47 @@ fn menu_slice(
 fn share_submenu() -> PieSlice {
     menu_slice(
         "menu_share",
-        "Compartir ▸",
-        "Enviar por LocalSend, QR Wi-Fi o enlace en la nube",
+        "Share ▸",
+        "Send via LocalSend, Wi-Fi QR, or cloud link",
         "󰐲",
         "share",
         vec![
             slice(
                 "send_localsend",
                 "LocalSend",
-                "Enviar a dispositivos cercanos con LocalSend",
+                "Send to nearby devices via LocalSend",
                 "󰄙",
                 "share",
                 false,
             ),
             slice(
                 "share_qr",
-                "QR Wi-Fi",
-                "Servidor HTTP local con código QR instantáneo",
+                "Wi-Fi QR",
+                "Local HTTP server with instant QR code",
                 "󰐲",
                 "share",
                 true,
             ),
             slice(
                 "upload_0x0",
-                "Subir 0x0.st",
-                "Subir a la nube y generar enlace + QR",
+                "Upload 0x0.st",
+                "Upload to cloud and generate link + QR",
                 "󰇚",
                 "share",
                 true,
             ),
             slice(
                 "copy_path",
-                "Copiar Ruta",
-                "Copiar ruta absoluta al portapapeles",
+                "Copy Path",
+                "Copy absolute path to clipboard",
                 "󰅍",
                 "dev",
                 false,
             ),
             slice(
                 "copy_data_uri",
-                "Copiar Base64",
-                "Codificar archivo como Data URI / Base64",
+                "Copy Base64",
+                "Encode file as Data URI / Base64",
                 "󰘦",
                 "dev",
                 false,
@@ -139,15 +139,15 @@ fn share_submenu() -> PieSlice {
 fn normalize_name_submenu() -> PieSlice {
     menu_slice(
         "menu_normalize",
-        "Normalizar ▸",
-        "Renombrar con formato limpio (kebab, snake, fecha…)",
+        "Normalize ▸",
+        "Rename with clean format (kebab, snake, date…)",
         "󰑕",
         "dev",
         vec![
             slice(
                 "norm_kebab",
                 "kebab-case",
-                "mi-archivo-final.ext (sin tildes ni espacios)",
+                "my-clean-file.ext (clean URL-friendly)",
                 "󰑕",
                 "dev",
                 false,
@@ -155,7 +155,7 @@ fn normalize_name_submenu() -> PieSlice {
             slice(
                 "norm_snake",
                 "snake_case",
-                "mi_archivo_final.ext (guiones bajos)",
+                "my_clean_file.ext (underscores)",
                 "󰌌",
                 "dev",
                 false,
@@ -163,31 +163,31 @@ fn normalize_name_submenu() -> PieSlice {
             slice(
                 "norm_camel",
                 "camelCase",
-                "miArchivoFinal.ext (estilo código)",
+                "myCleanFile.ext (programming style)",
                 "󰅩",
                 "dev",
                 false,
             ),
             slice(
                 "norm_date",
-                "Fecha + Nombre",
-                "Añadir prefijo YYYY-MM-DD_ al archivo",
+                "Date Prefix",
+                "Add YYYY-MM-DD_ prefix to filename",
                 "󰃭",
                 "dev",
                 false,
             ),
             slice(
                 "norm_clean",
-                "Limpiar Basura",
-                "Quitar (1), Copy, WhatsApp, paréntesis",
+                "Clean Clutter",
+                "Remove (1), Copy, WhatsApp, brackets",
                 "󰃢",
                 "tools",
                 false,
             ),
             slice(
                 "norm_lower",
-                "minúsculas",
-                "Convertir todo el nombre a minúsculas",
+                "lowercase",
+                "Convert entire filename to lowercase",
                 "󰬵",
                 "dev",
                 false,
@@ -199,47 +199,47 @@ fn normalize_name_submenu() -> PieSlice {
 fn image_scale_submenu() -> PieSlice {
     menu_slice(
         "menu_scale",
-        "Escalar ▸",
-        "Cambiar dimensiones o resolución de la imagen",
+        "Scale ▸",
+        "Resize dimensions or resolution of image",
         "󰩨",
         "convert",
         vec![
             slice(
                 "scale_50",
-                "Al 50%",
-                "Reducir ancho y alto a la mitad",
+                "50% Scale",
+                "Reduce width and height by half",
                 "󰩨",
                 "convert",
                 false,
             ),
             slice(
                 "scale_75",
-                "Al 75%",
-                "Reducción suave manteniendo nitidez",
+                "75% Scale",
+                "Smooth downscale preserving sharpness",
                 "󰩨",
                 "convert",
                 false,
             ),
             slice(
                 "scale_25",
-                "Al 25%",
-                "Miniatura ligera (1/4 de tamaño)",
+                "25% Scale",
+                "Lightweight thumbnail (1/4 size)",
                 "󰩨",
                 "convert",
                 false,
             ),
             slice(
                 "scale_1080",
-                "Máx 1080p",
-                "Ajustar lado mayor a 1920px (Full HD)",
+                "Max 1080p",
+                "Fit longest side to 1920px (Full HD)",
                 "󰍹",
                 "convert",
                 false,
             ),
             slice(
                 "scale_720",
-                "Máx 720p",
-                "Ajustar lado mayor a 1280px (HD)",
+                "Max 720p",
+                "Fit longest side to 1280px (HD)",
                 "󰍹",
                 "convert",
                 false,
@@ -247,7 +247,7 @@ fn image_scale_submenu() -> PieSlice {
             slice(
                 "scale_square",
                 "Avatar 512×512",
-                "Recorte cuadrado centrado 1:1",
+                "Square centered 1:1 crop",
                 "󰆞",
                 "convert",
                 false,
@@ -259,24 +259,24 @@ fn image_scale_submenu() -> PieSlice {
 fn image_convert_submenu(ext: &str) -> PieSlice {
     let mut subs = Vec::new();
     if ext != "webp" {
-        subs.push(slice("to_webp", "A WebP", "Formato moderno ultra ligero", "󰋩", "convert", false));
+        subs.push(slice("to_webp", "To WebP", "Ultra-lightweight modern format", "󰋩", "convert", false));
     }
     if ext != "png" {
-        subs.push(slice("to_png", "A PNG", "Formato sin pérdida con transparencia", "󰸭", "convert", false));
+        subs.push(slice("to_png", "To PNG", "Lossless format with transparency", "󰸭", "convert", false));
     }
     if ext != "jpg" && ext != "jpeg" {
-        subs.push(slice("to_jpg", "A JPG", "Formato JPEG compatible universal", "󰈥", "convert", false));
+        subs.push(slice("to_jpg", "To JPG", "Universal compatible JPEG", "󰈥", "convert", false));
     }
     if ext != "avif" {
-        subs.push(slice("to_avif", "A AVIF", "Compresión de última generación", "󰋩", "convert", false));
+        subs.push(slice("to_avif", "To AVIF", "Next-gen ultra-high compression", "󰋩", "convert", false));
     }
-    subs.push(slice("to_ico", "A Favicon .ICO", "Icono 64×64 para web/apps", "󰀻", "convert", false));
-    subs.push(slice("img_grayscale", "Blanco y Negro", "Convertir a escala de grises", "󰏘", "tools", false));
+    subs.push(slice("to_ico", "To Favicon .ICO", "64×64 icon for web & apps", "󰀻", "convert", false));
+    subs.push(slice("img_grayscale", "Grayscale", "Convert to black and white", "󰏘", "tools", false));
 
     menu_slice(
         "menu_convert_img",
-        "Convertir ▸",
-        "Convertir a WebP, PNG, JPG, AVIF, ICO o B/N",
+        "Convert ▸",
+        "Convert to WebP, PNG, JPG, AVIF, ICO or Grayscale",
         "󰋩",
         "convert",
         subs,
@@ -286,17 +286,17 @@ fn image_convert_submenu(ext: &str) -> PieSlice {
 fn image_transform_submenu() -> PieSlice {
     menu_slice(
         "menu_transform_img",
-        "Transformar ▸",
-        "Rotar, voltear, limpiar EXIF o extraer colores",
+        "Transform ▸",
+        "Rotate, flip, strip EXIF or extract colors",
         "󰑵",
         "tools",
         vec![
-            slice("rot_90_cw", "Rotar 90° ↻", "Girar 90 grados a la derecha", "󰑵", "tools", false),
-            slice("rot_90_ccw", "Rotar 90° ↺", "Girar 90 grados a la izquierda", "󰑴", "tools", false),
-            slice("rot_180", "Rotar 180°", "Invertir orientación verticalmente", "󰑵", "tools", false),
-            slice("flip_h", "Espejo Horiz.", "Voltear horizontalmente", "󰹳", "tools", false),
-            slice("extract_palette", "Paleta HEX", "Extraer 5 colores dominantes al clipboard", "󰏘", "dev", false),
-            slice("strip_exif", "Borrar EXIF", "Eliminar GPS y metadatos de cámara", "󰒃", "privacy", false),
+            slice("rot_90_cw", "Rotate 90° ↻", "Rotate 90 degrees clockwise", "󰑵", "tools", false),
+            slice("rot_90_ccw", "Rotate 90° ↺", "Rotate 90 degrees counter-clockwise", "󰑴", "tools", false),
+            slice("rot_180", "Rotate 180°", "Flip orientation vertically", "󰑵", "tools", false),
+            slice("flip_h", "Mirror Flip", "Flip image horizontally", "󰹳", "tools", false),
+            slice("extract_palette", "HEX Palette", "Extract 5 dominant colors to clipboard", "󰏘", "dev", false),
+            slice("strip_exif", "Strip EXIF", "Remove GPS and camera metadata", "󰒃", "privacy", false),
         ],
     )
 }
@@ -312,7 +312,7 @@ pub fn build_payload(
     let file_name = path
         .file_name()
         .and_then(|n| n.to_str())
-        .unwrap_or("archivo")
+        .unwrap_or("file")
         .to_string();
 
     let metadata = fs::metadata(path).ok();
@@ -321,7 +321,7 @@ pub fn build_payload(
         .map(|m| {
             if m.is_dir() {
                 let count = fs::read_dir(path).map(|d| d.count()).unwrap_or(0);
-                format!("{} elementos", count)
+                format!("{} items", count)
             } else {
                 format_size(m.len())
             }
@@ -333,7 +333,7 @@ pub fn build_payload(
             file_path,
             file_name,
             file_size,
-            file_kind: "CARPETA".to_string(),
+            file_kind: "FOLDER".to_string(),
             file_icon: "󰉋".to_string(),
             is_image: false,
             dimensions: String::new(),
@@ -342,14 +342,14 @@ pub fn build_payload(
             monitor_width,
             monitor_height,
             slices: vec![
-                slice("archive_zip", "Crear .ZIP", "Comprimir carpeta en .zip", "󰗄", "convert", false),
-                slice("archive_zst", "Crear .zst", "Comprimir en .tar.zst ultra rápido", "󰀼", "convert", false),
+                slice("archive_zip", "Create .ZIP", "Compress folder into .zip", "󰗄", "convert", false),
+                slice("archive_zst", "Create .zst", "Compress with ultra-fast Zstandard", "󰀼", "convert", false),
                 normalize_name_submenu(),
-                slice("send_localsend", "LocalSend", "Enviar carpeta a dispositivo cercano", "󰄙", "share", false),
+                slice("send_localsend", "LocalSend", "Send folder to nearby device", "󰄙", "share", false),
                 share_submenu(),
-                slice("open_terminal", "Terminal Aquí", "Abrir terminal en esta carpeta", "󰆍", "dev", false),
-                slice("open_nvim", "En Neovim", "Abrir carpeta como proyecto en Neovim", "", "dev", false),
-                slice("sha256_sum", "Peso Total", "Calcular uso de disco total", "󰋊", "tools", false),
+                slice("open_terminal", "Terminal Here", "Open terminal in this directory", "󰆍", "dev", false),
+                slice("open_nvim", "In Neovim", "Open folder as project in Neovim", "", "dev", false),
+                slice("sha256_sum", "Total Size", "Calculate total folder disk usage", "󰋊", "tools", false),
             ],
         };
     }
@@ -374,7 +374,7 @@ pub fn build_payload(
     let (file_kind, file_icon, is_image, slices) = match ext.as_str() {
         // 1. Raster Images (PNG, JPG, WebP, AVIF, BMP, GIF, TIFF, ICO)
         "png" | "jpg" | "jpeg" | "webp" | "avif" | "bmp" | "gif" | "tiff" | "ico" => (
-            format!("IMAGEN {}", ext.to_uppercase()),
+            format!("IMAGE {}", ext.to_uppercase()),
             "󰋩".to_string(),
             ext != "avif",
             vec![
@@ -382,16 +382,16 @@ pub fn build_payload(
                 image_scale_submenu(),
                 slice(
                     "compress_img",
-                    "Comprimir Peso",
-                    "Reducir MB manteniendo la misma resolución",
+                    "Compress Weight",
+                    "Reduce MB/KB keeping exact same resolution",
                     "󰗄",
                     "convert",
                     false,
                 ),
                 image_transform_submenu(),
                 share_submenu(),
-                slice("send_localsend", "LocalSend", "Enviar imagen con LocalSend", "󰄙", "share", false),
-                slice("ocr_text", "OCR Texto", "Extraer texto con Tesseract", "󰗊", "tools", false),
+                slice("send_localsend", "LocalSend", "Send image via LocalSend", "󰄙", "share", false),
+                slice("ocr_text", "OCR Text", "Extract text with Tesseract", "󰗊", "tools", false),
                 normalize_name_submenu(),
             ],
         ),
@@ -402,14 +402,14 @@ pub fn build_payload(
             "󰜡".to_string(),
             true,
             vec![
-                slice("to_png", "Render PNG", "Exportar vector SVG a PNG", "󰸭", "convert", false),
-                slice("to_webp", "Render WebP", "Exportar vector SVG a WebP", "󰋩", "convert", false),
-                slice("copy_data_uri", "Data URI SVG", "Copiar data:image/svg+xml;base64", "󰅍", "dev", false),
-                slice("copy_content", "Copiar XML", "Copiar código fuente del SVG", "󰘦", "dev", false),
+                slice("to_png", "Render PNG", "Export SVG vector to PNG", "󰸭", "convert", false),
+                slice("to_webp", "Render WebP", "Export SVG vector to WebP", "󰋩", "convert", false),
+                slice("copy_data_uri", "Data URI SVG", "Copy data:image/svg+xml;base64", "󰅍", "dev", false),
+                slice("copy_content", "Copy XML", "Copy SVG source code to clipboard", "󰘦", "dev", false),
                 share_submenu(),
-                slice("send_localsend", "LocalSend", "Enviar SVG con LocalSend", "󰄙", "share", false),
+                slice("send_localsend", "LocalSend", "Send SVG via LocalSend", "󰄙", "share", false),
                 normalize_name_submenu(),
-                slice("open_nvim", "Editar SVG", "Abrir código SVG en Neovim", "", "dev", false),
+                slice("open_nvim", "Edit SVG", "Open SVG source in Neovim", "", "dev", false),
             ],
         ),
 
@@ -419,13 +419,13 @@ pub fn build_payload(
             "󰕧".to_string(),
             false,
             vec![
-                slice("video_to_gif", "A GIF", "Convertir a GIF animado con paleta", "󰵸", "convert", false),
-                slice("extract_mp3", "Extraer MP3", "Extraer pista de audio en MP3", "󰎆", "convert", false),
-                slice("compress_discord", "Comprimir", "Reducir peso en H.264 (<720p)", "󰙯", "convert", false),
-                slice("mute_video", "Silenciar", "Quitar audio sin recodificar", "󰝟", "tools", false),
+                slice("video_to_gif", "To GIF", "Convert to animated GIF with palette", "󰵸", "convert", false),
+                slice("extract_mp3", "Extract MP3", "Extract audio track to MP3", "󰎆", "convert", false),
+                slice("compress_discord", "Compress", "Reduce file size in H.264 (<720p)", "󰙯", "convert", false),
+                slice("mute_video", "Mute Audio", "Remove audio track without re-encoding", "󰝟", "tools", false),
                 share_submenu(),
-                slice("send_localsend", "LocalSend", "Enviar video con LocalSend", "󰄙", "share", false),
-                slice("video_thumbnail", "Capturar Frame", "Extraer fotograma en PNG", "󰄀", "tools", false),
+                slice("send_localsend", "LocalSend", "Send video via LocalSend", "󰄙", "share", false),
+                slice("video_thumbnail", "Capture Frame", "Extract snapshot keyframe as PNG", "󰄀", "tools", false),
                 normalize_name_submenu(),
             ],
         ),
@@ -437,55 +437,55 @@ pub fn build_payload(
             false,
             vec![
                 if ext == "mp3" {
-                    slice("audio_to_opus", "A Opus", "Comprimir a Opus ligero", "󰋋", "convert", false)
+                    slice("audio_to_opus", "To Opus", "Compress to lightweight Opus", "󰋋", "convert", false)
                 } else {
-                    slice("extract_mp3", "A MP3", "Convertir a MP3 192kbps", "󰎆", "convert", false)
+                    slice("extract_mp3", "To MP3", "Convert to MP3 192kbps", "󰎆", "convert", false)
                 },
                 if ext == "wav" {
-                    slice("audio_to_flac", "A FLAC", "Comprimir sin pérdida a FLAC", "󰕾", "convert", false)
+                    slice("audio_to_flac", "To FLAC", "Compress losslessly to FLAC", "󰕾", "convert", false)
                 } else {
-                    slice("audio_to_wav", "A WAV", "Convertir a WAV PCM sin pérdida", "󰕾", "convert", false)
+                    slice("audio_to_wav", "To WAV", "Convert to uncompressed PCM WAV", "󰕾", "convert", false)
                 },
-                slice("audio_normalize", "Normalizar Vol", "Nivelar volumen de audio (loudnorm)", "󰓃", "tools", false),
+                slice("audio_normalize", "Normalize Vol", "Normalize loudness leveling (loudnorm)", "󰓃", "tools", false),
                 normalize_name_submenu(),
                 share_submenu(),
-                slice("send_localsend", "LocalSend", "Enviar audio con LocalSend", "󰄙", "share", false),
-                slice("sha256_sum", "SHA-256", "Copiar checksum SHA-256", "󰒃", "dev", false),
-                slice("copy_path", "Copiar Ruta", "Copiar ruta absoluta", "󰅍", "dev", false),
+                slice("send_localsend", "LocalSend", "Send audio via LocalSend", "󰄙", "share", false),
+                slice("sha256_sum", "SHA-256", "Copy SHA-256 checksum to clipboard", "󰒃", "dev", false),
+                slice("copy_path", "Copy Path", "Copy absolute path to clipboard", "󰅍", "dev", false),
             ],
         ),
 
         // 5. PDF Documents
         "pdf" => (
-            "DOCUMENTO PDF".to_string(),
+            "PDF DOCUMENT".to_string(),
             "󰈦".to_string(),
             false,
             vec![
-                slice("pdf_to_png", "A Imágenes", "Exportar páginas del PDF a PNG", "󰸭", "convert", false),
-                slice("archive_zip", "A .ZIP", "Empaquetar PDF en ZIP", "󰗄", "convert", false),
-                slice("archive_zst", "A .tar.zst", "Comprimir con Zstandard", "󰀼", "convert", false),
+                slice("pdf_to_png", "To Images", "Export PDF pages to PNG images", "󰸭", "convert", false),
+                slice("archive_zip", "To .ZIP", "Package PDF into ZIP archive", "󰗄", "convert", false),
+                slice("archive_zst", "To .tar.zst", "Compress with Zstandard", "󰀼", "convert", false),
                 normalize_name_submenu(),
                 share_submenu(),
-                slice("send_localsend", "LocalSend", "Enviar PDF con LocalSend", "󰄙", "share", false),
-                slice("sha256_sum", "SHA-256", "Calcular firma SHA-256", "󰒃", "dev", false),
-                slice("copy_path", "Copiar Ruta", "Copiar ruta del PDF", "󰅍", "dev", false),
+                slice("send_localsend", "LocalSend", "Send PDF via LocalSend", "󰄙", "share", false),
+                slice("sha256_sum", "SHA-256", "Calculate SHA-256 checksum", "󰒃", "dev", false),
+                slice("copy_path", "Copy Path", "Copy PDF file path", "󰅍", "dev", false),
             ],
         ),
 
         // 6. CSV / TSV Data tables
         "csv" | "tsv" => (
-            format!("DATOS {}", ext.to_uppercase()),
+            format!("DATA {}", ext.to_uppercase()),
             "󰈛".to_string(),
             false,
             vec![
-                slice("csv_to_json", "A JSON", "Convertir tabla CSV a archivo JSON", "󰘦", "convert", false),
-                slice("file_stats", "Contar Filas", "Ver total de registros y columnas", "󰄨", "tools", false),
-                slice("archive_zst", "Comprimir .zst", "Comprimir dataset con Zstandard", "󰀼", "convert", false),
+                slice("csv_to_json", "To JSON", "Convert CSV table to JSON file", "󰘦", "convert", false),
+                slice("file_stats", "Count Rows", "View total records and columns", "󰄨", "tools", false),
+                slice("archive_zst", "Compress .zst", "Compress dataset with Zstandard", "󰀼", "convert", false),
                 normalize_name_submenu(),
                 share_submenu(),
-                slice("send_localsend", "LocalSend", "Enviar dataset con LocalSend", "󰄙", "share", false),
-                slice("open_nvim", "En Neovim", "Inspeccionar datos en Neovim", "", "dev", false),
-                slice("sha256_sum", "SHA-256", "Calcular hash de integridad", "󰒃", "dev", false),
+                slice("send_localsend", "LocalSend", "Send dataset via LocalSend", "󰄙", "share", false),
+                slice("open_nvim", "In Neovim", "Inspect dataset in Neovim", "", "dev", false),
+                slice("sha256_sum", "SHA-256", "Calculate SHA-256 integrity hash", "󰒃", "dev", false),
             ],
         ),
 
@@ -496,59 +496,59 @@ pub fn build_payload(
             false,
             vec![
                 if ext.starts_with("json") {
-                    slice("json_pretty", "Formatear", "Embellecer e indentar JSON", "󰉼", "tools", false)
+                    slice("json_pretty", "Format JSON", "Beautify and indent JSON", "󰉼", "tools", false)
                 } else {
-                    slice("file_stats", "Contar Líneas", "Estadísticas de líneas y bytes", "󰈙", "tools", false)
+                    slice("file_stats", "Count Lines", "Line and byte statistics", "󰈙", "tools", false)
                 },
                 if ext.starts_with("json") {
-                    slice("json_minify", "Minificar", "Compactar JSON en una línea", "󰗄", "convert", false)
+                    slice("json_minify", "Minify JSON", "Compact JSON into one line", "󰗄", "convert", false)
                 } else {
-                    slice("archive_zip", "A .ZIP", "Empaquetar en archivo ZIP", "󰗄", "convert", false)
+                    slice("archive_zip", "To .ZIP", "Package into ZIP archive", "󰗄", "convert", false)
                 },
-                slice("copy_content", "Copiar Todo", "Copiar contenido al portapapeles", "󰅍", "dev", false),
-                slice("open_nvim", "En Neovim", "Editar configuración en Neovim", "", "dev", false),
+                slice("copy_content", "Copy All", "Copy content to clipboard", "󰅍", "dev", false),
+                slice("open_nvim", "In Neovim", "Edit configuration in Neovim", "", "dev", false),
                 share_submenu(),
-                slice("send_localsend", "LocalSend", "Enviar archivo con LocalSend", "󰄙", "share", false),
+                slice("send_localsend", "LocalSend", "Send file via LocalSend", "󰄙", "share", false),
                 normalize_name_submenu(),
-                slice("copy_data_uri", "Base64", "Copiar codificado en Base64", "󰨿", "dev", false),
+                slice("copy_data_uri", "Base64", "Copy Base64 encoded string", "󰨿", "dev", false),
             ],
         ),
 
         // 8. Markdown & Text
         "md" | "txt" | "rst" | "log" => (
-            format!("TEXTO {}", ext.to_uppercase()),
+            format!("TEXT {}", ext.to_uppercase()),
             "󰍔".to_string(),
             false,
             vec![
                 if ext == "md" {
-                    slice("md_to_html", "A HTML", "Exportar Markdown a página HTML", "󰌝", "convert", false)
+                    slice("md_to_html", "To HTML", "Export Markdown to styled HTML page", "󰌝", "convert", false)
                 } else {
-                    slice("archive_zst", "A .tar.zst", "Comprimir texto con Zstandard", "󰀼", "convert", false)
+                    slice("archive_zst", "To .tar.zst", "Compress text with Zstandard", "󰀼", "convert", false)
                 },
-                slice("copy_content", "Copiar Texto", "Copiar todo el contenido al clipboard", "󰅍", "dev", false),
-                slice("file_stats", "Contar Palabras", "Ver líneas, palabras y caracteres", "󰈙", "tools", false),
-                slice("open_nvim", "En Neovim", "Editar documento en Neovim", "", "dev", false),
+                slice("copy_content", "Copy Text", "Copy entire content to clipboard", "󰅍", "dev", false),
+                slice("file_stats", "Count Words", "View lines, words, and characters", "󰈙", "tools", false),
+                slice("open_nvim", "In Neovim", "Edit document in Neovim", "", "dev", false),
                 share_submenu(),
-                slice("send_localsend", "LocalSend", "Enviar documento con LocalSend", "󰄙", "share", false),
+                slice("send_localsend", "LocalSend", "Send document via LocalSend", "󰄙", "share", false),
                 normalize_name_submenu(),
-                slice("archive_zip", "A .ZIP", "Comprimir documento en ZIP", "󰗄", "convert", false),
+                slice("archive_zip", "To .ZIP", "Compress document into ZIP", "󰗄", "convert", false),
             ],
         ),
 
         // 9. Scripts & Source Code
         "sh" | "bash" | "zsh" | "py" | "rs" | "go" | "js" | "ts" | "lua" | "qml" | "c" | "cpp" | "html" | "css" => (
-            format!("CÓDIGO {}", ext.to_uppercase()),
+            format!("CODE {}", ext.to_uppercase()),
             "󰅩".to_string(),
             false,
             vec![
-                slice("open_nvim", "En Neovim", "Abrir código en Neovim", "", "dev", false),
-                slice("chmod_x", "Hacer +x", "Dar permisos de ejecución (chmod +x)", "󰒓", "tools", false),
-                slice("run_script", "Ejecutar", "Correr script en una terminal nueva", "󰆍", "dev", false),
-                slice("copy_content", "Copiar Código", "Copiar código fuente al portapapeles", "󰅍", "dev", false),
+                slice("open_nvim", "In Neovim", "Open code in Neovim", "", "dev", false),
+                slice("chmod_x", "Make +x", "Grant execute permissions (chmod +x)", "󰒓", "tools", false),
+                slice("run_script", "Run Script", "Run script in new terminal window", "󰆍", "dev", false),
+                slice("copy_content", "Copy Code", "Copy source code to clipboard", "󰅍", "dev", false),
                 share_submenu(),
-                slice("send_localsend", "LocalSend", "Enviar código con LocalSend", "󰄙", "share", false),
+                slice("send_localsend", "LocalSend", "Send code via LocalSend", "󰄙", "share", false),
                 normalize_name_submenu(),
-                slice("file_stats", "Líneas (LOC)", "Contar líneas de código", "󰈙", "tools", false),
+                slice("file_stats", "Lines (LOC)", "Count lines of code", "󰈙", "tools", false),
             ],
         ),
 
@@ -558,48 +558,48 @@ pub fn build_payload(
             "󰆧".to_string(),
             false,
             vec![
-                slice("open_blender", "Abrir Blender", "Abrir escena en Blender", "󰂫", "tools", false),
-                slice("archive_zst", "A .tar.zst", "Comprimir proyecto 3D con Zstandard", "󰀼", "convert", false),
-                slice("archive_zip", "A .ZIP", "Empaquetar proyecto 3D en ZIP", "󰗄", "convert", false),
+                slice("open_blender", "Open Blender", "Open scene in Blender", "󰂫", "tools", false),
+                slice("archive_zst", "To .tar.zst", "Compress 3D project with Zstandard", "󰀼", "convert", false),
+                slice("archive_zip", "To .ZIP", "Package 3D project in ZIP", "󰗄", "convert", false),
                 normalize_name_submenu(),
                 share_submenu(),
-                slice("send_localsend", "LocalSend", "Enviar modelo 3D con LocalSend", "󰄙", "share", false),
-                slice("sha256_sum", "SHA-256", "Calcular hash del modelo", "󰒃", "dev", false),
-                slice("open_terminal", "Terminal Aquí", "Abrir terminal en esta carpeta", "󰆍", "dev", false),
+                slice("send_localsend", "LocalSend", "Send 3D model via LocalSend", "󰄙", "share", false),
+                slice("sha256_sum", "SHA-256", "Calculate model SHA-256 hash", "󰒃", "dev", false),
+                slice("open_terminal", "Terminal Here", "Open terminal in this directory", "󰆍", "dev", false),
             ],
         ),
 
         // 11. Archives & Compressed Packages
         "zip" | "tar" | "gz" | "zst" | "xz" | "bz2" | "7z" | "rar" | "tgz" => (
-            format!("PAQUETE {}", ext.to_uppercase()),
+            format!("ARCHIVE {}", ext.to_uppercase()),
             "󰀼".to_string(),
             false,
             vec![
-                slice("extract_archive", "Extraer Aquí", "Descomprimir en subcarpeta limpia", "󰿺", "tools", false),
-                slice("list_archive", "Ver Archivos", "Contar elementos dentro del paquete", "󰈙", "tools", false),
-                slice("sha256_sum", "SHA-256", "Verificar checksum SHA-256", "󰒃", "dev", false),
+                slice("extract_archive", "Extract Here", "Decompress into clean subfolder", "󰿺", "tools", false),
+                slice("list_archive", "View Files", "Count entries inside archive", "󰈙", "tools", false),
+                slice("sha256_sum", "SHA-256", "Verify SHA-256 checksum", "󰒃", "dev", false),
                 normalize_name_submenu(),
                 share_submenu(),
-                slice("send_localsend", "LocalSend", "Enviar paquete con LocalSend", "󰄙", "share", false),
-                slice("copy_path", "Copiar Ruta", "Copiar ruta absoluta al portapapeles", "󰅍", "dev", false),
-                slice("open_terminal", "Terminal Aquí", "Abrir terminal en esta carpeta", "󰆍", "dev", false),
+                slice("send_localsend", "LocalSend", "Send archive via LocalSend", "󰄙", "share", false),
+                slice("copy_path", "Copy Path", "Copy absolute path to clipboard", "󰅍", "dev", false),
+                slice("open_terminal", "Terminal Here", "Open terminal in this directory", "󰆍", "dev", false),
             ],
         ),
 
         // 12. AppImage / Binaries
         "appimage" | "run" | "bin" => (
-            "EJECUTABLE".to_string(),
+            "EXECUTABLE".to_string(),
             "󰀻".to_string(),
             false,
             vec![
-                slice("chmod_x", "Hacer +x", "Dar permisos de ejecución", "󰒓", "tools", false),
-                slice("run_binary", "Ejecutar", "Lanzar aplicación directamente", "󰐊", "tools", false),
-                slice("sha256_sum", "SHA-256", "Verificar firma SHA-256", "󰒃", "dev", false),
+                slice("chmod_x", "Make +x", "Grant execute permissions", "󰒓", "tools", false),
+                slice("run_binary", "Run App", "Launch application directly", "󰐊", "tools", false),
+                slice("sha256_sum", "SHA-256", "Verify SHA-256 signature", "󰒃", "dev", false),
                 normalize_name_submenu(),
                 share_submenu(),
-                slice("send_localsend", "LocalSend", "Enviar ejecutable con LocalSend", "󰄙", "share", false),
-                slice("archive_zst", "A .tar.zst", "Comprimir binario con Zstandard", "󰀼", "convert", false),
-                slice("open_terminal", "Terminal Aquí", "Abrir terminal en esta carpeta", "󰆍", "dev", false),
+                slice("send_localsend", "LocalSend", "Send executable via LocalSend", "󰄙", "share", false),
+                slice("archive_zst", "To .tar.zst", "Compress binary with Zstandard", "󰀼", "convert", false),
+                slice("open_terminal", "Terminal Here", "Open terminal in this directory", "󰆍", "dev", false),
             ],
         ),
 
@@ -609,25 +609,25 @@ pub fn build_payload(
                 || name_lower.ends_with(".tar.xz")
                 || name_lower.ends_with(".tar.gz")
             {
-                "PAQUETE TAR".to_string()
+                "TAR ARCHIVE".to_string()
             } else if ext.is_empty() {
-                "ARCHIVO".to_string()
+                "FILE".to_string()
             } else {
-                format!("ARCHIVO {}", ext.to_uppercase())
+                format!("FILE {}", ext.to_uppercase())
             };
             (
                 label,
                 "󰈔".to_string(),
                 false,
                 vec![
-                    slice("archive_zip", "A .ZIP", "Empaquetar en archivo ZIP", "󰗄", "convert", false),
-                    slice("archive_zst", "A .tar.zst", "Comprimir con Zstandard", "󰀼", "convert", false),
+                    slice("archive_zip", "To .ZIP", "Package into ZIP archive", "󰗄", "convert", false),
+                    slice("archive_zst", "To .tar.zst", "Compress with Zstandard", "󰀼", "convert", false),
                     normalize_name_submenu(),
-                    slice("sha256_sum", "SHA-256", "Copiar firma SHA-256 al portapapeles", "󰒃", "dev", false),
+                    slice("sha256_sum", "SHA-256", "Copy SHA-256 checksum to clipboard", "󰒃", "dev", false),
                     share_submenu(),
-                    slice("send_localsend", "LocalSend", "Enviar archivo con LocalSend", "󰄙", "share", false),
-                    slice("copy_data_uri", "Base64", "Copiar codificado en Base64", "󰘦", "dev", false),
-                    slice("open_nvim", "En Neovim", "Abrir archivo en Neovim", "", "dev", false),
+                    slice("send_localsend", "LocalSend", "Send file via LocalSend", "󰄙", "share", false),
+                    slice("copy_data_uri", "Base64", "Copy Base64 encoded string", "󰘦", "dev", false),
+                    slice("open_nvim", "In Neovim", "Open file in Neovim", "", "dev", false),
                 ],
             )
         }
