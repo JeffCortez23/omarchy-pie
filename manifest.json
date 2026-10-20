@@ -1,0 +1,47 @@
+{
+  "schemaVersion": 1,
+  "id": "io.github.jeffcortez23.omarchy-pie",
+  "name": "Omarchy Pie",
+  "version": "1.0.0",
+  "author": "Jeff Cortez",
+  "license": "MIT",
+  "description": "Contextual radial pie menu for file conversions, image scaling/compression, EXIF privacy, filename normalization, OCR, LocalSend, and instant Wi-Fi QR sharing.",
+  "kinds": [
+    "service",
+    "overlay",
+    "bar-widget"
+  ],
+  "keepLoaded": false,
+  "entryPoints": {
+    "service": "Service.qml",
+    "overlay": "PieOverlay.qml",
+    "barWidget": "BarWidget.qml"
+  },
+  "barWidget": {
+    "displayName": "Omarchy Pie",
+    "description": "Contextual radial file action wheel (Convert, Scale, Normalize, LocalSend, QR Share)",
+    "category": "Files",
+    "aliases": [
+      "pie",
+      "radial",
+      "convert",
+      "share",
+      "localsend",
+      "qr",
+      "ocr"
+    ],
+    "allowMultiple": false,
+    "defaultSection": "right",
+    "defaults": {
+      "hideIcon": false
+    },
+    "schema": [
+      {
+        "key": "hideIcon",
+        "type": "boolean",
+        "label": "Hide bar icon (use hotkey Super+Z only)",
+        "defaultValue": false
+      }
+    ]
+  }
+}
