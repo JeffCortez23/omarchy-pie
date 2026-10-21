@@ -12,7 +12,7 @@ use std::net::{TcpListener, UdpSocket};
 use std::os::unix::fs::PermissionsExt;
 use std::path::{Path, PathBuf};
 use std::process::{Command, Stdio};
-use std::time::{Duration, SystemTime, UNIX_EPOCH};
+use std::time::{Duration, SystemTime};
 
 pub fn notify(title: &str, body: &str) {
     let _ = Command::new("notify-send")
@@ -55,7 +55,8 @@ pub fn execute_action(action_id: &str, file_path: &Path) -> Result<(), String> {
         return Err(msg);
     }
 
-    let parent = file_path.parent().unwrap_or_else(|| Path::new("/tmp"));
+    let fallback_dir = crate::secure_tmp::get_secure_runtime_dir().unwrap_or_else(|_| PathBuf::from("."));
+    let parent = file_path.parent().unwrap_or(&fallback_dir);
     let stem = file_path
         .file_stem()
         .and_then(|s| s.to_str())
@@ -1404,7 +1405,7 @@ fn detect_lan_ip() -> String {
     "127.0.0.1".to_string()
 }
 
-fn generate_qr_svg(url: &str, out_path: &Path) -> Result<(), String> {
+fn generate_qr_svg(url: &str, dir: &Path, prefix: &str) -> Result<PathBuf, String> {
     let code = QrCode::new(url.as_bytes()).map_err(|e| e.to_string())?;
     let svg_xml = code
         .render()
@@ -1412,8 +1413,7 @@ fn generate_qr_svg(url: &str, out_path: &Path) -> Result<(), String> {
         .dark_color(svg::Color("#111318"))
         .light_color(svg::Color("#ffffff"))
         .build();
-    fs::write(out_path, svg_xml).map_err(|e| e.to_string())?;
-    Ok(())
+    crate::secure_tmp::write_private_file(dir, prefix, "svg", svg_xml.as_bytes())
 }
 
 fn push_qr_to_shell(url: &str, qr_path: &Path, subtitle: &str) {
@@ -1424,7 +1424,16 @@ fn push_qr_to_shell(url: &str, qr_path: &Path, subtitle: &str) {
     })
     .to_string();
 
-    let _ = fs::write("/tmp/omarchy-pie/qr_state.json", &payload);
+    if let Ok(runtime_dir) = crate::secure_tmp::get_secure_runtime_dir() {
+        use std::os::unix::fs::OpenOptionsExt;
+        let _ = fs::OpenOptions::new()
+            .write(true)
+            .create(true)
+            .truncate(true)
+            .mode(0o600)
+            .open(runtime_dir.join("qr_state.json"))
+            .and_then(|mut f| f.write_all(payload.as_bytes()));
+    }
 
     for id in ["io.github.jeffcortez23.omarchy-pie", "elyefris.pie"] {
         let _ = Command::new("/usr/share/omarchy/bin/omarchy-shell")
@@ -1435,8 +1444,7 @@ fn push_qr_to_shell(url: &str, qr_path: &Path, subtitle: &str) {
 }
 
 fn upload_to_0x0(input: &Path) -> Result<(), String> {
-    let tmp_dir = PathBuf::from("/tmp/omarchy-pie");
-    let _ = fs::create_dir_all(&tmp_dir);
+    let runtime_dir = crate::secure_tmp::get_secure_runtime_dir()?;
 
     let res = Command::new("curl")
         .args([
@@ -1459,12 +1467,7 @@ fn upload_to_0x0(input: &Path) -> Result<(), String> {
         return serve_file_qr(input);
     }
 
-    let ts = SystemTime::now()
-        .duration_since(UNIX_EPOCH)
-        .map(|d| d.as_millis())
-        .unwrap_or(0);
-    let qr_path = tmp_dir.join(format!("qr_cloud_{}.svg", ts));
-    let _ = generate_qr_svg(&url, &qr_path);
+    let qr_path = generate_qr_svg(&url, &runtime_dir, "qr_cloud")?;
     wl_copy(&url);
     push_qr_to_shell(&url, &qr_path, "Public link on 0x0.st (copied)");
     notify("Uploaded to 0x0.st", &format!("{} (copied to clipboard)", url));
@@ -1472,25 +1475,32 @@ fn upload_to_0x0(input: &Path) -> Result<(), String> {
 }
 
 fn serve_file_qr(input: &Path) -> Result<(), String> {
-    let tmp_dir = PathBuf::from("/tmp/omarchy-pie");
-    let _ = fs::create_dir_all(&tmp_dir);
+    let runtime_dir = crate::secure_tmp::get_secure_runtime_dir()?;
 
-    let pid_file = tmp_dir.join("server.pid");
+    let pid_file = runtime_dir.join("server.pid");
     if let Ok(old_pid) = fs::read_to_string(&pid_file) {
         let old_pid = old_pid.trim();
         if !old_pid.is_empty() && old_pid != std::process::id().to_string() {
             let _ = Command::new("kill").arg(old_pid).status();
         }
     }
-    let _ = fs::write(&pid_file, std::process::id().to_string());
+    use std::os::unix::fs::OpenOptionsExt;
+    if let Ok(mut f) = fs::OpenOptions::new()
+        .write(true)
+        .create(true)
+        .truncate(true)
+        .mode(0o600)
+        .open(&pid_file)
+    {
+        let _ = f.write_all(std::process::id().to_string().as_bytes());
+    }
 
     let serve_target: PathBuf = if input.is_dir() {
         let stem = input
             .file_name()
             .and_then(|s| s.to_str())
             .unwrap_or("folder");
-        let zip_path = tmp_dir.join(format!("{}.zip", stem));
-        let _ = fs::remove_file(&zip_path);
+        let (_, zip_path) = crate::secure_tmp::create_private_file(&runtime_dir, stem, "zip")?;
         let parent = input.parent().unwrap_or_else(|| Path::new("."));
         let _ = Command::new("zip")
             .current_dir(parent)
@@ -1520,12 +1530,7 @@ fn serve_file_qr(input: &Path) -> Result<(), String> {
         .unwrap_or("bin");
 
     let url = format!("http://{}:{}/{}.{}", lan_ip, port, safe_name, ext);
-    let ts = SystemTime::now()
-        .duration_since(UNIX_EPOCH)
-        .map(|d| d.as_millis())
-        .unwrap_or(0);
-    let qr_path = tmp_dir.join(format!("qr_wifi_{}.svg", ts));
-    generate_qr_svg(&url, &qr_path)?;
+    let qr_path = generate_qr_svg(&url, &runtime_dir, "qr_wifi")?;
 
     wl_copy(&url);
     push_qr_to_shell(&url, &qr_path, "Scan with your phone on same Wi-Fi network");

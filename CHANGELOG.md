@@ -7,6 +7,10 @@ All notable changes to the **Omarchy Pie** plugin will be documented in this fil
 ## [1.0.0] - 2026-10-20
 
 ### Added
+- **Owner-Only Secure Runtime Directory & Private File Creation**:
+  - Replaced world-writable temporary paths with a verified owner-only per-user runtime directory (`$XDG_RUNTIME_DIR/omarchy-pie` with fallback to `/tmp/omarchy-pie-<uid>`).
+  - Strict symlink and ownership verification: verifies owner UID, validates directory mode `0700` (`rwx------`), and refuses to traverse attacker symlinks.
+  - Exclusive atomic file creation (`O_CREAT | O_EXCL`) with private `0600` (`rw-------`) permissions for clipboard screenshots, QR code SVGs, and temporary sharing archives.
 - **Radial Pie Menu Interface (`PieOverlay.qml`)**:
   - Fullscreen GPU-accelerated Wayland overlay implemented in Quickshell (`QQuickPaintedItem` / HTML5 Canvas).
   - Multi-level radial slices with outer glow, dynamic hover physics, smooth ease-out entry animation, and sound feedback.

@@ -1,5 +1,6 @@
 mod actions;
 mod context;
+pub mod secure_tmp;
 
 use percent_encoding::percent_decode_str;
 use serde::Deserialize;
@@ -7,7 +8,7 @@ use std::env;
 use std::fs;
 use std::path::{Path, PathBuf};
 use std::process::Command;
-use std::time::{SystemTime, UNIX_EPOCH};
+use std::time::SystemTime;
 
 #[derive(Deserialize)]
 struct CursorPos {
@@ -207,20 +208,20 @@ fn resolve_target_file(explicit_arg: Option<&str>) -> Option<PathBuf> {
         .unwrap_or_default();
 
     if types_out.contains("image/png") {
-        let tmp_dir = PathBuf::from("/tmp/omarchy-pie");
-        let _ = fs::create_dir_all(&tmp_dir);
-        let ts = SystemTime::now()
-            .duration_since(UNIX_EPOCH)
-            .map(|d| d.as_secs())
-            .unwrap_or(0);
-        let img_path = tmp_dir.join(format!("clipboard_{}.png", ts));
-        if let Ok(out) = Command::new("wl-paste")
-            .args(["--type", "image/png"])
-            .output()
-        {
-            if out.status.success() && !out.stdout.is_empty() {
-                if fs::write(&img_path, &out.stdout).is_ok() {
-                    return Some(img_path);
+        if let Ok(runtime_dir) = secure_tmp::get_secure_runtime_dir() {
+            if let Ok(out) = Command::new("wl-paste")
+                .args(["--type", "image/png"])
+                .output()
+            {
+                if out.status.success() && !out.stdout.is_empty() {
+                    if let Ok(img_path) = secure_tmp::write_private_file(
+                        &runtime_dir,
+                        "clipboard",
+                        "png",
+                        &out.stdout,
+                    ) {
+                        return Some(img_path);
+                    }
                 }
             }
         }

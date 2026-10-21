@@ -145,7 +145,7 @@ Item {
       var info = JSON.parse(argJson)
       root.qrUrl = String(info.url || "")
       root.qrSvgPath = String(info.qrPath || "")
-      root.qrSubtitle = String(info.subtitle || "Escanea el código QR")
+      root.qrSubtitle = String(info.subtitle || "Scan QR code")
       root.qrLoading = false
       root.qrMode = true
     } catch (e) {
