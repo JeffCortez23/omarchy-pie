@@ -139,8 +139,7 @@ omarchy restart shell
 ### Summoning Methods
 1. **`SUPER + Z`**: Select any file in Nautilus or your desktop, then press `Super + Z`.
 2. **Nautilus Context Menu**: Right-click any file ➔ **Scripts** ➔ **Omarchy Pie**.
-3. **Status Bar Widget**: Click the pie menu icon in the Omarchy status bar to summon the wheel for the most recent clipboard item.
-4. **Terminal / CLI**:
+3. **Terminal / CLI**:
    ```bash
    omarchy-pie --path /path/to/any/file.png
    ```
@@ -210,7 +209,6 @@ omarchy-pie/
 │   ├── context.rs        # MIME analysis & dynamic radial slice builder
 │   └── actions.rs        # Action execution engine (FFmpeg, ImageMagick, LocalSend, HTTP QR)
 ├── PieOverlay.qml        # GPU-accelerated Quickshell Wayland radial wheel
-├── BarWidget.qml         # Omarchy status bar indicator widget
 ├── Service.qml           # Background IPC listener & Nautilus script installer
 ├── manifest.json         # Omarchy plugin manifest
 ├── preview.png           # Marketplace banner preview

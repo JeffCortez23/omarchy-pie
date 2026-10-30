@@ -808,7 +808,15 @@ fn copy_text_content(input: &Path) -> Result<(), String> {
 fn make_executable(input: &Path) -> Result<(), String> {
     let meta = fs::metadata(input).map_err(|e| e.to_string())?;
     let mut perms = meta.permissions();
-    perms.set_mode(perms.mode() | 0o755);
+    let mode = perms.mode();
+    let mut new_mode = mode | 0o100;
+    if mode & 0o040 != 0 {
+        new_mode |= 0o010;
+    }
+    if mode & 0o004 != 0 {
+        new_mode |= 0o001;
+    }
+    perms.set_mode(new_mode);
     fs::set_permissions(input, perms).map_err(|e| e.to_string())?;
     notify(
         "Permissions updated",
@@ -1535,40 +1543,72 @@ fn serve_file_qr(input: &Path) -> Result<(), String> {
     wl_copy(&url);
     push_qr_to_shell(&url, &qr_path, "Scan with your phone on same Wi-Fi network");
 
-    let _ = listener.set_nonblocking(false);
+    let _ = listener.set_nonblocking(true);
     let start = SystemTime::now();
-    for _ in 0..8 {
-        if start.elapsed().unwrap_or(Duration::ZERO) > Duration::from_secs(600) {
-            break;
-        }
-        if let Ok((mut stream, peer)) = listener.accept() {
-            let _ = stream.set_read_timeout(Some(Duration::from_secs(5)));
-            let mut reader = BufReader::new(&stream);
-            let mut request_line = String::new();
-            let _ = reader.read_line(&mut request_line);
+    let deadline = Duration::from_secs(600);
+    let mut served_count = 0;
 
-            if request_line.contains("favicon.ico") {
-                let _ = stream.write_all(b"HTTP/1.1 404 Not Found\r\nContent-Length: 0\r\n\r\n");
-                continue;
-            }
+    while start.elapsed().unwrap_or(Duration::ZERO) < deadline && served_count < 8 {
+        match listener.accept() {
+            Ok((mut stream, peer)) => {
+                served_count += 1;
+                let _ = stream.set_read_timeout(Some(Duration::from_secs(5)));
+                let mut reader = BufReader::new(&stream);
+                let mut request_line = String::new();
+                let _ = reader.read_line(&mut request_line);
 
-            if let Ok(mut f) = File::open(&serve_target) {
-                let len = f.metadata().map(|m| m.len()).unwrap_or(0);
-                let headers = format!(
-                    "HTTP/1.1 200 OK\r\nContent-Type: application/octet-stream\r\nContent-Length: {}\r\nContent-Disposition: attachment; filename=\"{}\"\r\nConnection: close\r\n\r\n",
-                    len, file_name
-                );
-                if stream.write_all(headers.as_bytes()).is_ok() {
-                    if std::io::copy(&mut f, &mut stream).is_ok() {
-                        notify(
-                            "File downloaded via Wi-Fi",
-                            &format!("Sent to {}", peer.ip()),
-                        );
+                if request_line.contains("favicon.ico") {
+                    let _ = stream.write_all(b"HTTP/1.1 404 Not Found\r\nContent-Length: 0\r\n\r\n");
+                    continue;
+                }
+
+                if let Ok(mut f) = File::open(&serve_target) {
+                    let len = f.metadata().map(|m| m.len()).unwrap_or(0);
+                    let headers = format!(
+                        "HTTP/1.1 200 OK\r\nContent-Type: application/octet-stream\r\nContent-Length: {}\r\nContent-Disposition: attachment; filename=\"{}\"\r\nConnection: close\r\n\r\n",
+                        len, file_name
+                    );
+                    if stream.write_all(headers.as_bytes()).is_ok() {
+                        if std::io::copy(&mut f, &mut stream).is_ok() {
+                            notify(
+                                "File downloaded via Wi-Fi",
+                                &format!("Sent to {}", peer.ip()),
+                            );
+                        }
                     }
                 }
             }
+            Err(ref e) if e.kind() == std::io::ErrorKind::WouldBlock => {
+                std::thread::sleep(Duration::from_millis(100));
+            }
+            Err(_) => break,
         }
     }
 
     Ok(())
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_make_executable_preserves_owner_only_isolation() {
+        let dir = crate::secure_tmp::get_secure_runtime_dir().expect("get runtime dir");
+        let path = crate::secure_tmp::write_private_file(&dir, "script", "sh", b"#!/bin/sh\necho ok\n")
+            .expect("write script");
+
+        // Initial permissions must be 0600
+        let initial_mode = fs::metadata(&path).unwrap().permissions().mode() & 0o777;
+        assert_eq!(initial_mode, 0o600);
+
+        // Run make_executable
+        make_executable(&path).expect("make_executable");
+
+        // Updated permissions must be 0700 (owner execute only, no group or other access)
+        let updated_mode = fs::metadata(&path).unwrap().permissions().mode() & 0o777;
+        assert_eq!(updated_mode, 0o700, "private 0600 file must become 0700, not 0755");
+
+        let _ = fs::remove_file(path);
+    }
 }
